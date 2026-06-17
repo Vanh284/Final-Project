@@ -1,79 +1,48 @@
 <?php
-require_once __DIR__ . '/../models/SatisfactionSurveyModel.php';
+class SurveyController extends Controller
+{
+    private SurveyModel $surveyModel;
+    private TicketModel $ticketModel;
 
-class SurveyController {
-    private SatisfactionSurveyModel $model;
-
-    public function __construct() {
-        $this->model = new SatisfactionSurveyModel();
+    public function __construct()
+    {
+        require_once __DIR__ . '/../models/SurveyModel.php';
+        require_once __DIR__ . '/../models/TicketModel.php';
+        $this->surveyModel = new SurveyModel();
+        $this->ticketModel = new TicketModel();
     }
 
-    // GET /survey/form?ticket_id=X  → hiển thị form đánh giá
-    public function showForm(): void {
-        $this->requireLogin();
-        $ticketId = (int)($_GET['ticket_id'] ?? 0);
-        $existing = $this->model->getByTicket($ticketId);
-        $error    = $_GET['error'] ?? '';
-        require __DIR__ . '/../views/survey/form.php';
-    }
-
-    // POST /survey/submit  → xử lý submit form
-    public function submit(): void {
-        $this->requireLogin();
-
+    /** Submit satisfaction survey */
+    public function store(): void
+    {
+        $this->requireAuth();
+        $user     = $this->currentUser();
         $ticketId = (int)($_POST['ticket_id'] ?? 0);
-        $rating   = (int)($_POST['rating']    ?? 0);
-        $comment  = trim($_POST['comment']    ?? '');
+        $rating   = (int)($_POST['rating'] ?? 0);
+        $comment  = trim($_POST['comment'] ?? '');
 
-        $result = $this->model->submit($ticketId, $_SESSION['user_id'], $rating, $comment);
-
-        if ($result['success']) {
-            $_SESSION['flash'] = $result['message'];
-            $base = $_SESSION['base_url'] ?? '';
-            header('Location: ' . $base . '/?page=ticket_detail&id=' . $ticketId . '&survey=done');
-        } else {
-            $_SESSION['flash_error'] = $result['message'];
-            $base = $_SESSION['base_url'] ?? '';
-            header('Location: ' . $base . '/?page=survey_form&ticket_id=' . $ticketId);
+        if ($rating < 1 || $rating > 5) {
+            $this->json(['success' => false, 'message' => 'Đánh giá phải từ 1–5 sao'], 422);
         }
-        exit;
-    }
 
-    // GET /survey/report  → Admin: báo cáo tổng hợp
-    public function report(): void {
-        $this->requireAdmin();
-        $data = $this->model->getAverageRatingByDepartment();
-        require __DIR__ . '/../views/survey/report.php';
-    }
-
-    // GET /survey/all  → Admin: xem tất cả surveys
-    public function listAll(): void {
-        $this->requireAdmin();
-        $surveys = $this->model->getAll();
-        require __DIR__ . '/../views/survey/list.php';
-    }
-
-    // POST /survey/delete  → Admin only
-    public function delete(): void {
-        $this->requireAdmin();
-        header('Content-Type: application/json');
-        $id = (int)($_POST['id'] ?? 0);
-        $ok = $this->model->delete($id);
-        echo json_encode(['success' => $ok]);
-    }
-
-    private function requireLogin(): void {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /helpdesk/public/?page=login');
-            exit;
+        $ticket = $this->ticketModel->find($ticketId);
+        if (!$ticket) { $this->json(['success' => false, 'message' => 'Ticket không tồn tại'], 404); }
+        if ($ticket['submitter_id'] != $user['id']) {
+            $this->json(['success' => false, 'message' => 'Không có quyền'], 403);
         }
-    }
-
-    private function requireAdmin(): void {
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-            http_response_code(403);
-            echo '<p>Forbidden – Admin only.</p>';
-            exit;
+        if (!in_array($ticket['status'], ['resolved','closed'])) {
+            $this->json(['success' => false, 'message' => 'Chỉ có thể đánh giá ticket đã giải quyết'], 400);
         }
+        if ($this->surveyModel->findByTicket($ticketId)) {
+            $this->json(['success' => false, 'message' => 'Bạn đã đánh giá ticket này rồi'], 400);
+        }
+
+        $id = $this->surveyModel->create([
+            'ticket_id'    => $ticketId,
+            'submitted_by' => $user['id'],
+            'rating'       => $rating,
+            'comment'      => $comment,
+        ]);
+        $this->json(['success' => true, 'id' => $id]);
     }
 }
