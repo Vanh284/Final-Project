@@ -1,0 +1,2 @@
+Một ticket có nhiều ticket_attachments (1).
+Một user có thể tải lên nhiều ticket_attachments (1)
