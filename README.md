@@ -1,4 +1,12 @@
 # Campus Helpdesk – INS3064 Final Project (Đề 13)
+Introduction
+Campus Helpdesk is a web-based support ticket system for managing IT and facility service requests in a university environment. The platform provides ticket creation, automatic routing, staff assignment, SLA tracking, internal communication, escalation handling, and user satisfaction surveys to improve support efficiency and service quality.
+## Thành viên 2 – Module phụ trách
+| Bảng | Chức năng |
+|---|---|
+| `ticket` | stores support requests submitted by users. |
+| `assignment` | stores ticket assignment history between staff members. |
+| `comment` |stores communications and updates related to support tickets |
 
 ## Thành viên 3 – Module phụ trách
 | Bảng | Chức năng |
@@ -88,8 +96,27 @@ helpdesk/
 
 ---
 
-## Business Logic (Member 3)
+## Business Logic 
 
+(member 2)
+### ticket
+Mỗi ticket phải được tạo bởi một User hợp lệ.
+Mỗi ticket phải thuộc một Category.
+Ticket chỉ được chuyển trạng thái theo quy trình: Open → In Progress → Resolved → Closed.
+Chỉ Staff hoặc Admin mới được cập nhật trạng thái ticket.
+
+### Ticket Assignment Business Rules
+Mỗi ticket chỉ được phân công cho Staff thuộc bộ phận phù hợp.
+Một Staff có thể được giao nhiều ticket.
+Hệ thống lưu lại lịch sử phân công để theo dõi trách nhiệm xử lý.
+
+### Comment Business Rules
+* Mỗi comment phải gắn với một ticket.
+* Chỉ các thành viên liên quan đến ticket mới được phép bình luận.
+* Comment được lưu lại để theo dõi quá trình xử lý.
+* Comment nội bộ chỉ dành cho Staff và Admin.
+
+(Member 3)
 ### ticket_status_logs
 - Không ghi log nếu `old_status == new_status`
 - Mỗi lần staff/admin đổi trạng thái → tự động ghi log kèm note
