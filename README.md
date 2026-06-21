@@ -68,29 +68,48 @@ Truy cập: http://localhost:8000/
 
 ```
 helpdesk/
+│
 ├── config/
-│   └── database.php              ← Singleton DB connection
+│   └── config.php
+│
+├── core/
+│   ├── Database.php          ← Singleton DB connection
+│   ├── Controller.php
+│   ├── Model.php
+│   ├── TicketRoutingService.php
+│   ├── SlaEscalationService.php
+│   └── SurveyReportService.php
+│
 ├── models/
+│   ├── UserModel.php
+│   ├── DepartmentModel.php
+│   ├── CategoryModel.php
+│   ├── TicketModel.php
+│   ├── AssignmentModel.php
+│   ├── CommentModel.php           ← comment (member 2)
 │   ├── TicketStatusLogModel.php  ← CRUD + business logic (Member 3)
 │   ├── EscalationLogModel.php    ← SLA check, auto/manual escalate (Member 3)
 │   └── SatisfactionSurveyModel.php ← Survey submit + report (Member 3)
+│
 ├── controllers/
-│   ├── StatusLogController.php
-│   ├── EscalationController.php
-│   └── SurveyController.php
+│   ├── AuthController.php
+│   ├── UserController.php
+│   ├── DepartmentController.php
+│   ├── CategoryController.php
+│   ├── TicketController.php   → index(), show(), create(), store(), update(), destroy() (mem 2)
+│   ├── CommentController.php        → store(), update(), destroy()   (mem 2)
+│   ├── SurveyController.php
+│   ├── ReportController.php
+│   └── BackendController.php
+│
 ├── views/
-│   ├── layout.php / layout_end.php
-│   ├── login.php
-│   ├── dashboard.php
-│   ├── ticket_detail.php
-│   ├── status_logs/history.php
-│   ├── escalation/list.php
-│   ├── escalation/detail.php
-│   └── survey/form.php, report.php, list.php
+│
 ├── public/
 │   ├── index.php                 ← Front controller / Router
 │   └── .htaccess
 ├── helpdesk_db.sql               ← Database schema + seed data
+│
+└── index.php
 └── README.md
 ```
 
