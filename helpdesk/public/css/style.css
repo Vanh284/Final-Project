@@ -1,0 +1,80 @@
+/* ============================================================
+   Campus Helpdesk – Custom Styles
+   ============================================================ */
+
+/* Body & typography */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 0.9rem;
+    color: #212529;
+}
+
+/* Cursor pointer utility */
+.cursor-pointer { cursor: pointer; }
+
+/* Navbar */
+.navbar-brand { letter-spacing: 0.5px; }
+
+/* Sidebar / card tweaks */
+.card { border-radius: 10px; }
+.card-header { border-radius: 10px 10px 0 0 !important; }
+
+/* Table */
+.table th { font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px; color: #6c757d; }
+.table td { font-size: 0.875rem; vertical-align: middle; }
+.table-hover tbody tr:hover { background-color: #f0f4ff; cursor: pointer; }
+
+/* Badges */
+.badge { font-weight: 500; font-size: 0.78rem; }
+
+/* Ticket status colors */
+.status-open        { color: #0d6efd; }
+.status-in_progress { color: #0dcaf0; }
+.status-pending     { color: #ffc107; }
+.status-resolved    { color: #198754; }
+.status-closed      { color: #6c757d; }
+.status-cancelled   { color: #343a40; }
+
+/* Comment bubbles */
+.comment-item { animation: fadeInUp 0.3s ease; }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Star rating hover */
+.star-label { cursor: pointer; transition: transform 0.15s; }
+.star-label:hover { transform: scale(1.2); }
+
+/* Flash messages */
+#flash-area .alert { animation: slideDown 0.3s ease; }
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Progress bar */
+.progress { border-radius: 50px; }
+.progress-bar { border-radius: 50px; }
+
+/* Login page */
+.bg-primary.min-vh-100 { background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-responsive .table { font-size: 0.78rem; }
+    .card-body { padding: 1rem; }
+}
+
+/* Sticky navbar */
+.navbar { position: sticky; top: 0; z-index: 1030; }
+
+/* Sidebar code blocks */
+code { color: #0d6efd; background: #e7f0ff; padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.85em; }
+
+/* Priority indicator border */
+.border-critical { border-left-color: #dc3545 !important; }
+.border-high      { border-left-color: #fd7e14 !important; }
+
+/* Overdue highlight */
+tr.overdue td { background-color: #fff3f3; }
